@@ -41,7 +41,7 @@ cp .env.example .env
 |---|---|
 | `VITE_PLANNING_CENTER_CLIENT_ID` | OAuth application Client ID from the Planning Center developer portal |
 
-Register your OAuth app at [https://api.planningcenteronline.com/oauth/applications](https://api.planningcenteronline.com/oauth/applications) and set the redirect URI to `http://localhost:5173/callback` for local development (update to your production domain when deploying).
+Register your OAuth app at [https://api.planningcenteronline.com/oauth/applications](https://api.planningcenteronline.com/oauth/applications) and set the redirect URI to `http://localhost:8000/callback` for local development (update to your production domain when deploying).
 
 ## Project Setup
 
