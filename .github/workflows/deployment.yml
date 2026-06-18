@@ -3,8 +3,6 @@ name: Build & Deploy
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 env:
   NODE_VERSION: '22'
@@ -36,7 +34,7 @@ jobs:
       - name: Build application
         run: npm run build
         env:
-          VITE_PLANNING_CENTER_CLIENT_ID: ${{ secrets.PLANNING_CENTER_CLIENT_ID }}
+          VITE_PLANNING_CENTER_CLIENT_ID: ${{ vars.PLANNING_CENTER_CLIENT_ID }}
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
