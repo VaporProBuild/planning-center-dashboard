@@ -62,7 +62,7 @@ onMounted(async () => {
 
   // Default to the first group type
   if (groupTypes.value.length > 0) {
-    selectedGroupTypeId.value = groupTypes.value[0].id
+    selectedGroupTypeId.value = groupTypes.value[0]?.id ?? ''
   }
 
   loading.value = false
