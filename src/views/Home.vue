@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { api } from '@/services/api'
 
@@ -25,6 +26,10 @@ onMounted(async () => {
   <div>
     <h1>Welcome, {{ authStore.user?.name }}</h1>
 
+    <nav>
+      <RouterLink to="/life-groups">Life Group Engagement</RouterLink>
+    </nav>
+
     <h2>People</h2>
 
     <p v-if="loading">Loading...</p>
@@ -40,7 +45,21 @@ onMounted(async () => {
 
 <style scoped>
 h1 {
+  margin-bottom: 1rem;
+}
+
+nav {
   margin-bottom: 1.5rem;
+}
+
+nav a {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+nav a:hover {
+  text-decoration: underline;
 }
 
 h2 {

@@ -3,6 +3,7 @@ import { useAuthStore } from '@/stores/auth'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Callback from '../views/Callback.vue'
+import LifeGroups from '../views/LifeGroups.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,6 +22,12 @@ const router = createRouter({
       path: '/',
       name: 'Home',
       component: Home,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/life-groups',
+      name: 'LifeGroups',
+      component: LifeGroups,
       meta: { requiresAuth: true },
     },
   ],

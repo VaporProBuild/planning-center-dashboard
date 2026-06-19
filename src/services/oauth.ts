@@ -9,7 +9,7 @@ const settings = {
   client_id: clientId,
   redirect_uri: redirectUri,
   response_type: 'code',
-  scope: 'openid people',
+  scope: 'openid people groups',
   userStore: new WebStorageStateStore({ store: window.localStorage }),
 }
 
