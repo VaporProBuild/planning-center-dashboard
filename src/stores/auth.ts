@@ -8,6 +8,7 @@ export interface User {
   id: string
   name: string
   email?: string
+  avatar?: string
 }
 
 interface PlanningCenterUser {
@@ -16,6 +17,7 @@ interface PlanningCenterUser {
     attributes?: {
       name?: string
       email?: string
+      avatar?: string
     }
   }
   [key: string]: unknown
@@ -47,6 +49,7 @@ export const useAuthStore = defineStore('auth', () => {
           id: userData.data?.id || 'unknown',
           name: userData.data?.attributes?.name || 'User',
           email: userData.data?.attributes?.email,
+          avatar: userData.data?.attributes?.avatar,
         }
       } else {
         // If we can't fetch user profile (CORS, etc), still mark as authenticated
@@ -85,6 +88,7 @@ export const useAuthStore = defineStore('auth', () => {
               id: userData.data?.id || 'unknown',
               name: userData.data?.attributes?.name || 'User',
               email: userData.data?.attributes?.email,
+              avatar: userData.data?.attributes?.avatar,
             }
           } else {
             // If we can't fetch profile but have a valid token, stay authenticated

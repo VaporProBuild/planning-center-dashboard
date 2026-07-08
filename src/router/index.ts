@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Callback from '../views/Callback.vue'
 import LifeGroups from '../views/LifeGroups.vue'
+import Attendance from '../views/Attendance.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,13 +23,19 @@ const router = createRouter({
       path: '/',
       name: 'Home',
       component: Home,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, title: 'Home' },
     },
     {
       path: '/life-groups',
       name: 'LifeGroups',
       component: LifeGroups,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, title: 'Life Groups' },
+    },
+    {
+      path: '/attendance',
+      name: 'Attendance',
+      component: Attendance,
+      meta: { requiresAuth: true, title: 'Attendance' },
     },
   ],
 })

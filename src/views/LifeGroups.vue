@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
+import { mdiAccountGroup } from '@mdi/js'
 import { api } from '@/services/api'
+import SectionMain from '@/components/SectionMain.vue'
+import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
+import CardBox from '@/components/CardBox.vue'
+import FormControl from '@/components/FormControl.vue'
 
 interface GroupType {
   id: string
@@ -110,60 +115,92 @@ async function fetchGroups(groupTypeId: string) {
 </script>
 
 <template>
-  <div class="page">
-    <h1>Life Group Engagement</h1>
+  <SectionMain>
+    <SectionTitleLineWithButton :icon="mdiAccountGroup" title="Life Group Engagement" main />
 
-    <p v-if="loading" class="status">Loading&hellip;</p>
-    <p v-else-if="error" class="error">{{ error }}</p>
+    <p v-if="loading" class="text-gray-500 dark:text-slate-400">Loading&hellip;</p>
+    <p v-else-if="error" class="text-red-500">{{ error }}</p>
 
     <template v-else>
-      <div class="controls">
-        <label for="group-type">Group type</label>
-        <select id="group-type" v-model="selectedGroupTypeId">
-          <option v-for="type in groupTypes" :key="type.id" :value="type.id">
-            {{ type.attributes.name }}
-          </option>
-        </select>
+      <div class="mb-6 flex items-center gap-3">
+        <label for="group-type" class="font-semibold text-gray-700 dark:text-slate-200"
+          >Group type</label
+        >
+        <FormControl
+          id="group-type"
+          v-model="selectedGroupTypeId"
+          class="w-56"
+          :options="groupTypes.map((type) => ({ id: type.id, label: type.attributes.name }))"
+        />
       </div>
 
-      <div v-if="loadingGroups" class="status">Loading groups&hellip;</div>
+      <div v-if="loadingGroups" class="text-gray-500 dark:text-slate-400">
+        Loading groups&hellip;
+      </div>
 
-      <div v-else class="stat-card">
-        <div class="donut" :style="dashStyle">
-          <div class="donut-hole">
-            <span class="pct">{{ percentage }}%</span>
+      <CardBox v-else class="mb-6">
+        <div class="flex flex-col items-center gap-10 sm:flex-row">
+          <div
+            class="flex h-40 w-40 shrink-0 items-center justify-center rounded-full"
+            :style="dashStyle"
+          >
+            <div
+              class="flex h-28 w-28 items-center justify-center rounded-full bg-white dark:bg-slate-900"
+            >
+              <span class="text-3xl font-bold text-slate-800 dark:text-slate-100"
+                >{{ percentage }}%</span
+              >
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <p class="text-lg text-gray-700 dark:text-slate-200">
+              of your church family is in a {{ selectedGroupTypeName }}
+            </p>
+            <p class="text-gray-600 dark:text-slate-400">
+              <strong>{{ totalInGroups.toLocaleString() }}</strong> memberships across
+              <strong>{{ groups.length }}</strong> group{{ groups.length !== 1 ? 's' : '' }}
+            </p>
+            <p class="text-gray-600 dark:text-slate-400">
+              out of <strong>{{ totalPeople.toLocaleString() }}</strong> total people
+            </p>
+            <p v-if="totalInGroups > totalPeople" class="mt-2 text-sm text-gray-400">
+              * Count exceeds total people because members in multiple groups are counted once per
+              group.
+            </p>
           </div>
         </div>
+      </CardBox>
 
-        <div class="details">
-          <p class="label">of your church family is in a {{ selectedGroupTypeName }}</p>
-          <p class="count">
-            <strong>{{ totalInGroups.toLocaleString() }}</strong> memberships across
-            <strong>{{ groups.length }}</strong> group{{ groups.length !== 1 ? 's' : '' }}
-          </p>
-          <p class="count">
-            out of <strong>{{ totalPeople.toLocaleString() }}</strong> total people
-          </p>
-          <p v-if="totalInGroups > totalPeople" class="note">
-            * Count exceeds total people because members in multiple groups are counted once per
-            group.
-          </p>
-        </div>
-      </div>
-
-      <div v-if="!loadingGroups && groups.length > 0" class="group-list">
-        <h2>Groups breakdown</h2>
-        <table>
+      <CardBox v-if="!loadingGroups && groups.length > 0" has-table>
+        <h2 class="mb-3 px-6 pt-6 text-xl font-semibold text-gray-700 dark:text-slate-200">
+          Groups breakdown
+        </h2>
+        <table class="w-full text-sm">
           <thead>
             <tr>
-              <th>Group</th>
-              <th>Members</th>
+              <th
+                class="border-b border-gray-100 bg-gray-50 px-4 py-3 text-left font-semibold text-gray-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+              >
+                Group
+              </th>
+              <th
+                class="border-b border-gray-100 bg-gray-50 px-4 py-3 text-right font-semibold text-gray-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+              >
+                Members
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="group in groups" :key="group.id">
-              <td>{{ group.attributes.name }}</td>
-              <td>
+              <td
+                class="border-b border-gray-100 px-4 py-3 text-gray-700 dark:border-slate-700 dark:text-slate-300"
+              >
+                {{ group.attributes.name }}
+              </td>
+              <td
+                class="border-b border-gray-100 px-4 py-3 text-right text-gray-700 dark:border-slate-700 dark:text-slate-300"
+              >
                 {{
                   (
                     group.attributes.memberships_count ??
@@ -175,144 +212,14 @@ async function fetchGroups(groupTypeId: string) {
             </tr>
           </tbody>
         </table>
-      </div>
+      </CardBox>
 
-      <p v-else-if="!loadingGroups && groups.length === 0" class="status">
+      <p
+        v-else-if="!loadingGroups && groups.length === 0"
+        class="text-gray-500 dark:text-slate-400"
+      >
         No groups found for this type.
       </p>
     </template>
-  </div>
+  </SectionMain>
 </template>
-
-<style scoped>
-.page {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  margin-bottom: 1.5rem;
-}
-
-h2 {
-  margin: 2rem 0 0.75rem;
-}
-
-.status {
-  color: #666;
-}
-
-.error {
-  color: #c33;
-}
-
-.controls {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 2rem;
-}
-
-label {
-  font-weight: 600;
-}
-
-select {
-  padding: 0.4rem 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
-}
-
-/* --- Stat card --- */
-.stat-card {
-  display: flex;
-  align-items: center;
-  gap: 2.5rem;
-  padding: 2rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  background: #fafafa;
-}
-
-/* --- Donut chart (CSS only) --- */
-.donut {
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.donut-hole {
-  width: 112px;
-  height: 112px;
-  border-radius: 50%;
-  background: #fafafa;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.pct {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1e293b;
-}
-
-/* --- Detail text --- */
-.details {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.label {
-  font-size: 1.1rem;
-  color: #374151;
-}
-
-.count {
-  color: #4b5563;
-}
-
-.note {
-  font-size: 0.8rem;
-  color: #9ca3af;
-  margin-top: 0.5rem;
-}
-
-/* --- Table --- */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.95rem;
-}
-
-th,
-td {
-  padding: 0.55rem 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-th {
-  font-weight: 600;
-  color: #374151;
-  background: #f9fafb;
-}
-
-td:last-child,
-th:last-child {
-  text-align: right;
-}
-
-@media (max-width: 520px) {
-  .stat-card {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-</style>

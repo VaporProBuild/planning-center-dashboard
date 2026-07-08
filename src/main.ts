@@ -13,9 +13,18 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
+import './css/main.css'
+
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
 
 app.mount('#app')
+
+const defaultDocumentTitle = 'Planning Center Dashboard'
+
+router.afterEach((to) => {
+  const title = to.meta?.title as string | undefined
+  document.title = title ? `${title} — ${defaultDocumentTitle}` : defaultDocumentTitle
+})

@@ -1,0 +1,50 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --transition-position: right, left, top, bottom, margin, padding;
+}
+
+/*
+  Tailwind CSS v4 changed the default border color to `currentColor`.
+  This restores the v3 default so undecorated borders still look right.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+.aside {
+  @apply bg-gray-900;
+}
+
+.aside-brand {
+  @apply bg-gray-900 text-white;
+}
+
+.aside-menu-item {
+  @apply text-gray-300 hover:text-white;
+}
+
+.aside-menu-item-active {
+  @apply text-white;
+}
+
+.aside-menu-dropdown {
+  @apply bg-gray-700/50;
+}
+
+.navbar-item-label {
+  @apply text-black hover:text-blue-500;
+}
+
+.navbar-item-label-active {
+  @apply text-blue-600;
+}

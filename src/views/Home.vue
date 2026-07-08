@@ -1,20 +1,27 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { RouterLink } from 'vue-router'
+import { mdiAccountMultiple } from '@mdi/js'
 import { useAuthStore } from '@/stores/auth'
 import { api } from '@/services/api'
+import SectionMain from '@/components/SectionMain.vue'
+import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
+import CardBox from '@/components/CardBox.vue'
+
+interface Person {
+  id: string
+  attributes?: { name?: string }
+}
 
 const authStore = useAuthStore()
 const loading = ref(true)
 const error = ref<string | null>(null)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const people = ref<any[]>([])
+const people = ref<Person[]>([])
 
 onMounted(async () => {
   const response = await api.getPeople()
   if (response.data) {
     const dataArray = (response.data as Record<string, unknown>).data
-    people.value = Array.isArray(dataArray) ? dataArray : []
+    people.value = Array.isArray(dataArray) ? (dataArray as Person[]) : []
   } else {
     error.value = response.error ?? 'Failed to fetch people'
   }
@@ -23,60 +30,28 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
-    <h1>Welcome, {{ authStore.user?.name }}</h1>
+  <SectionMain>
+    <SectionTitleLineWithButton
+      :icon="mdiAccountMultiple"
+      :title="`Welcome, ${authStore.user?.name ?? ''}`"
+      main
+    />
 
-    <nav>
-      <RouterLink to="/life-groups">Life Group Engagement</RouterLink>
-    </nav>
+    <CardBox>
+      <h2 class="mb-4 text-xl font-semibold text-gray-700 dark:text-slate-200">People</h2>
 
-    <h2>People</h2>
-
-    <p v-if="loading">Loading...</p>
-    <p v-else-if="error" class="error">{{ error }}</p>
-    <ul v-else-if="people.length > 0">
-      <li v-for="person in people" :key="person.id">
-        {{ person.attributes?.name }}
-      </li>
-    </ul>
-    <p v-else>No people found.</p>
-  </div>
+      <p v-if="loading" class="text-gray-500 dark:text-slate-400">Loading...</p>
+      <p v-else-if="error" class="text-red-500">{{ error }}</p>
+      <ul v-else-if="people.length > 0" class="divide-y divide-gray-100 dark:divide-slate-700">
+        <li
+          v-for="person in people"
+          :key="person.id"
+          class="py-2 text-gray-700 dark:text-slate-300"
+        >
+          {{ person.attributes?.name }}
+        </li>
+      </ul>
+      <p v-else class="text-gray-500 dark:text-slate-400">No people found.</p>
+    </CardBox>
+  </SectionMain>
 </template>
-
-<style scoped>
-h1 {
-  margin-bottom: 1rem;
-}
-
-nav {
-  margin-bottom: 1.5rem;
-}
-
-nav a {
-  color: #3b82f6;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-nav a:hover {
-  text-decoration: underline;
-}
-
-h2 {
-  margin-bottom: 0.75rem;
-}
-
-.error {
-  color: #c33;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-li {
-  padding: 0.4rem 0;
-  border-bottom: 1px solid #eee;
-}
-</style>
